@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -18,24 +17,23 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private static final String ACTIVITY = "MainActivity";
     ProgressDialog progress_dialog;
-    String tz = "Europe/Madrid";
-    String format = "json";
-    String req = "matchsday";
-    String key = "9fb0641102eeb3cd7d7db99606624a08";
-    String date = "2015-7-9"; //año-mes-dia
+
     ArrayList<MatchsDay> lista_partidos;
-    TextView texto;
+    //TextView texto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -43,9 +41,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         final String METODO = "onCreate()";
         Log.i(ACTIVITY, METODO);
-        new PoisJSON().execute("http://www.resultados-futbol.com/scripts/api/api.php?tz=" + tz + "&format=" + format + "&req=" + req + "&key=" + key + "&date=" + date);
 
-        texto = (TextView)findViewById(R.id.tvTexto);
+        String url = CrearURL();
+
+        new PoisJSON().execute(url);
+
+        //texto = (TextView)findViewById(R.id.tvTexto); Linea para mostrar la informacion obtenida en la misma activity
 
 
     }
@@ -54,49 +55,43 @@ public class MainActivity extends ActionBarActivity {
         final String METODO = "onStart()";
         Log.i(ACTIVITY, METODO);
         super.onStart();
-
-
-
     }
+
     protected void onRestart()
     {
         final String METODO = "onRestart()";
         Log.i(ACTIVITY, METODO);
         super.onRestart();
-
-
-
     }
+
     protected void onResume()
     {
         final String METODO = "onResume()";
         Log.i(ACTIVITY, METODO);
         super.onResume();
-
-
-
     }
+
     protected void onPause()
     {
         final String METODO = "onPause()";
         Log.i(ACTIVITY,METODO);
         super.onPause();
-
     }
+
     protected void onStop()
     {
         final String METODO = "onStop()";
         Log.i(ACTIVITY, METODO);
         super.onStop();
-
     }
+
     protected void onDestroy()
     {
         final String METODO = "onDestroy()";
         Log.i(ACTIVITY,METODO);
         super.onDestroy();
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -118,6 +113,33 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    public String CrearURL()
+    {
+        final String METODO = "CrearURL()";
+        Log.i(ACTIVITY, METODO);
+
+        MyApplication app = (MyApplication) getApplication();
+        String req = "matchsday";
+        app.setRequire(req);
+        String url ="http://www.resultados-futbol.com/scripts/api/api.php?tz=" + app.getTimeZone()
+                + "&format=" + app.getFormat() + "&req=" + app.getRequire() + "&key=" + app.getKeyPro()
+                + "&date=" + getFechaActual();
+
+        Log.i(ACTIVITY, METODO+" URL: "+url);
+
+        return url;
+    }
+    public String getFechaActual()
+    {
+        final String METODO = "getFechaActual()";
+        Log.i(ACTIVITY,METODO);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Calendar cal = Calendar.getInstance();
+        Log.i(ACTIVITY,METODO+" Fecha: "+dateFormat.format(cal.getTime())); //2014/08/06
+
+        return dateFormat.format(cal.getTime());
+    }
+
     private class PoisJSON extends AsyncTask<String, Void, String> //Hilo para descargar el JSON
     {
         @Override
@@ -188,7 +210,16 @@ public class MainActivity extends ActionBarActivity {
 
             progress_dialog.dismiss(); //Cierro el cuadro de dialogo
 
-            if(lista_partidos.size()<=0)
+            MyApplication app = (MyApplication) getApplication();
+            app.setListaPartidos(lista_partidos);
+
+            Intent intent = new Intent(MainActivity.this, MatchsDayActivity.class);
+            startActivity(intent);
+            finish();
+
+            //Script para mostrar en la misma activity
+
+            /*if(lista_partidos.size()<=0)
             {
                 Log.w(ACTIVITY, METODO + " La lista está vacía");
             }
@@ -206,12 +237,7 @@ public class MainActivity extends ActionBarActivity {
 
                 }
 
-
-
-            }
-            /*Intent i = new Intent(MainActivity.this, Principal.class); //Paso a la siguiente Activity pasando los datos necesarios para mostrar una lista de puntos y el mapa con los puntos
-            startActivity(i);
-            finish();*/
+            }*/
 
         }
     }
