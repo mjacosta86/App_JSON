@@ -41,6 +41,7 @@ public class MatchsDay implements Serializable
     private String league_id;           //Id de la competicion
     private String team1;               //Id equipo local
     private String team2;               //Id equipo visitante
+
     private String numc;
     private String year;
     private String playoffs;
