@@ -163,11 +163,11 @@ public class MainActivity extends ActionBarActivity {
         {
             final String METODO = "onPostExecute()";
             Log.i(ACTIVITY, METODO);
+            MyApplication app = (MyApplication) getApplication();
             try
             {
                 JSONObject jsonObject = new JSONObject(result);
                 JSONArray pois = new JSONArray(jsonObject.getString("matches")); //Aqui extraigo lo que contiene el array de JSON "list"
-
                 //---print out the content of the json feed---
                 lista_partidos = new ArrayList<MatchsDay>();
                 for (int x = 0; x < pois.length(); x++) //En este bucle introduzco los datos en los vectores correspondientes
@@ -186,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
                     partido.setNumc(poisItem.getString("numc").toString().trim());
                     partido.setYear(poisItem.getString("year").toString().trim());
                     partido.setPlayoffs(poisItem.getString("playoffs").toString().trim());
+                    partido.setGroupCode(poisItem.getString("group_code").toString().trim());
                     partido.setCoef(poisItem.getString("coef").toString().trim());
                     partido.setCflag(poisItem.getString("cflag").toString().trim());
                     partido.setLocalShield(poisItem.getString("local_shield").toString().trim());
@@ -210,7 +211,7 @@ public class MainActivity extends ActionBarActivity {
 
             progress_dialog.dismiss(); //Cierro el cuadro de dialogo
 
-            MyApplication app = (MyApplication) getApplication();
+
             app.setListaPartidos(lista_partidos);
 
             Intent intent = new Intent(MainActivity.this, MatchsDayActivity.class);

@@ -37,7 +37,7 @@ public class MatchsDay implements Serializable
     private String round;               //Jornada de partido
     private String local;               //Equipo Local
     private String visitor;             //Equipo Visitante
-    private String competition_name;    //Nombre de la competición
+    private String competition_name;    //Nombre de la competicion
     private String league_id;           //Id de la competicion
     private String team1;               //Id equipo local
     private String team2;               //Id equipo visitante

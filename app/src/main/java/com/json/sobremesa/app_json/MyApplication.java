@@ -2,6 +2,8 @@ package com.json.sobremesa.app_json;
 
 import android.app.Application;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 /**
@@ -15,6 +17,8 @@ public class MyApplication extends Application
     String format = "json";
     String req;
     ArrayList<MatchsDay> lista_partidos;
+    ArrayList<Categories> lista_categorias;
+    //JSONArray json_partidos;
 
     //SETTERS
     public void setKeyPro(String k)
@@ -41,6 +45,14 @@ public class MyApplication extends Application
     {
         lista_partidos = l;
     }
+    public void setListaCategorias(ArrayList<Categories> l)
+    {
+        lista_categorias = l;
+    }
+    /*public void setJSONPartidos(JSONArray p)
+    {
+        json_partidos = p;
+    }*/
     //GETTERS
     public String getKeyPro()
     {
@@ -66,6 +78,14 @@ public class MyApplication extends Application
     {
         return lista_partidos;
     }
+    public ArrayList<Categories> getListaCategorias()
+    {
+        return lista_categorias;
+    }
+    /*public JSONArray getJSONPartidos()
+    {
+        return json_partidos;
+    }*/
 
 
 }

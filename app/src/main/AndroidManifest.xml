@@ -23,6 +23,10 @@
             android:name=".MatchsDayActivity"
             android:label="@string/title_activity_matchs_day" >
         </activity>
+        <activity
+            android:name=".CategoriesActivity"
+            android:label="@string/title_activity_categories" >
+        </activity>
     </application>
 
 </manifest>
