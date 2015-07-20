@@ -6,4 +6,6 @@
     <string name="title_activity_principal">Principal</string>
     <string name="title_activity_matchs_day">MatchsDay</string>
     <string name="title_activity_categories">Categories</string>
+    <string name="title_activity_list_teams">ListTeamsActivity</string>
+    <string name="title_activity_teams">TeamsActivity</string>
 </resources>

@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,43 +37,43 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class CategoriesActivity extends ActionBarActivity {
-
-    private ListView lstCategories;
-    ArrayList<Categories> lista_categorias;
+public class ListTeamsActivity extends ActionBarActivity
+{
+    private static final String ACTIVITY = "ListTeamsActivity";
+    private ListView lstListTeams;
     ArrayList<ListTeams> lista_equipos;
+    ArrayList<Teams> equipos;
     ProgressDialog progress_dialog;
-    private static final String ACTIVITY = "CategoriesActivity";
-
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories);
+        setContentView(R.layout.activity_list_teams);
         final String METODO = "onCreate()";
         Log.i(ACTIVITY, METODO);
 
         MyApplication app = (MyApplication) getApplication();
-        lista_categorias = app.getListaCategorias();
+        lista_equipos = app.getListaEquipos();
 
         AdaptadorTitulares adaptador = new AdaptadorTitulares(this);
 
-        lstCategories = (ListView)findViewById(R.id.LstCategories);
+        lstListTeams = (ListView)findViewById(R.id.LstListaEquipos);
 
-        lstCategories.setAdapter(adaptador);
+        lstListTeams.setAdapter(adaptador);
 
-        lstCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lstListTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 
                 //Alternativa 1:
-                String opcionSeleccionada = ((Categories) a.getAdapter().getItem(position)).getId();
+                String opcionSeleccionada = ((ListTeams) a.getAdapter().getItem(position)).getId();
 
                 //Alternativa 2:
                 //String opcionSeleccionada =
                 //		((TextView)v.findViewById(R.id.LblTitulo))
                 //			.getText().toString();
 
-                String url = CrearURL(lista_categorias.get(position).getId());
+                String url = CrearURL(lista_equipos.get(position).getId());
                 new PoisJSON().execute(url);
 
 
@@ -123,56 +123,47 @@ public class CategoriesActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_lists_matchs_day, menu);
+        getMenuInflater().inflate(R.menu.menu_list_teams, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    public String CrearURL(String league)
+    public String CrearURL(String id)
     {
         final String METODO = "CrearURL()";
         Log.i(ACTIVITY, METODO);
 
         MyApplication app = (MyApplication) getApplication();
-        String req = "teams";
-        String filter = "all";
+        String req = "team";
         app.setRequire(req);
-        //http://www.resultados-futbol.com/scripts/api/api.php?tz=Europe/Madrid&format=&req=categories&key=65f8402127f4aae612732b4cb6089c22&country=es&filter=all
-        //http://www.resultados-futbol.com/scripts/api/api.php?tz=Europe/Madrid&format=xml&req=teams&key=65f8402127f4aae612732b4cb6089c22&league=1&year=2015
+        //http://www.resultados-futbol.com/scripts/api/api.php?tz=Europe/Madrid&format=xml&req=team&key=65f8402127f4aae612732b4cb6089c22&id=1617
         String url ="http://www.resultados-futbol.com/scripts/api/api.php?tz=" + app.getTimeZone()
-                + "&format=" + app.getFormat() + "&req=" + app.getRequire() + "&key=" + app.getKeyPro() + "&league=" + league
-                + "&year=" + getYear();
+                + "&format=" + app.getFormat() + "&req=" + app.getRequire() + "&key=" + app.getKeyPro()
+                + "&id=" + id;
 
         Log.i(ACTIVITY, METODO + " URL: " + url);
 
         return url;
-    }
-    public String getYear()
-    {
-        final String METODO = "getFechaActual()";
-        Log.i(ACTIVITY,METODO);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy");
-        Calendar cal = Calendar.getInstance();
-        Log.i(ACTIVITY, METODO + " Fecha: " + dateFormat.format(cal.getTime())); //2014/08/06
-
-        return dateFormat.format(cal.getTime());
     }
 
     private class PoisJSON extends AsyncTask<String, Void, String> //Hilo para descargar el JSON
@@ -182,7 +173,7 @@ public class CategoriesActivity extends ActionBarActivity {
         {
             final String METODO = "onPreExecute()";
             Log.i(ACTIVITY,METODO);
-            progress_dialog = new ProgressDialog(CategoriesActivity.this); //Aqui lanzo una ventana para advertir que se estan descargando el JSON de POIS
+            progress_dialog = new ProgressDialog(ListTeamsActivity.this); //Aqui lanzo una ventana para advertir que se estan descargando el JSON de POIS
             progress_dialog.setMessage("Descargando archivos...");
             progress_dialog.setCancelable(false);
             progress_dialog.show();
@@ -196,26 +187,32 @@ public class CategoriesActivity extends ActionBarActivity {
 
         protected void onPostExecute(String result)
         {
+            Teams t = new Teams();
             final String METODO = "onPostExecute()";
             Log.i(ACTIVITY, METODO);
             MyApplication app = (MyApplication) getApplication();
             try
             {
                 JSONObject jsonObject = new JSONObject(result);
-                JSONArray teams = jsonObject.getJSONArray("team");
-                lista_equipos = new ArrayList<ListTeams>();
+                JSONObject equipo = jsonObject.getJSONObject("team");
+
+                t.setId(equipo.getString("id").toString().trim());
+                t.setName_show(equipo.getString("nameShow").toString().trim());
+                Log.i(ACTIVITY, METODO + " " + t.getName_show());
+                /*JSONArray teams = jsonObject.getJSONArray("team");
+                equipos = new ArrayList<Teams>();
                 for (int i = 0; i < teams.length(); ++i)
                 {
                     JSONObject item = teams.getJSONObject(i);//JSONObject arrayElement_0 = jsonArray.getJSONObject(0);
 
-                    ListTeams lt = new ListTeams();
-                    lt.setId(item.getString("id").toString().trim());
-                    lt.setNameShow(item.getString("nameShow").toString().trim());
-                    Log.i(ACTIVITY, METODO+" "+lt.getNameShow());
+                    Teams t = new Teams();
+                    t.setId(item.getString("id").toString().trim());
+                    t.setName_show(item.getString("nameShow").toString().trim());
+                    Log.i(ACTIVITY, METODO+" "+t.getName_show());
                     //---print out the content of the json feed---
-                    lista_equipos.add(lt);
+                    equipos.add(t);
 
-                }
+                }*/
 
 
 
@@ -224,7 +221,7 @@ public class CategoriesActivity extends ActionBarActivity {
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                Toast.makeText(CategoriesActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(ListTeamsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
                 Log.w("WARNING",e.toString());
             }
             catch (Exception e)
@@ -236,7 +233,8 @@ public class CategoriesActivity extends ActionBarActivity {
 
             app.setListaEquipos(lista_equipos);
 
-            Intent intent = new Intent(CategoriesActivity.this, ListTeamsActivity.class);
+            Intent intent = new Intent(ListTeamsActivity.this, TeamsActivity.class);
+            intent.putExtra("equipo",t.getName_show());
             startActivity(intent);
 
 
@@ -278,7 +276,7 @@ public class CategoriesActivity extends ActionBarActivity {
         return stringBuilder.toString();
     }
 
-    class AdaptadorTitulares extends ArrayAdapter<Categories>
+    class AdaptadorTitulares extends ArrayAdapter<ListTeams>
     {
 
         Activity context;
@@ -286,7 +284,7 @@ public class CategoriesActivity extends ActionBarActivity {
 
         AdaptadorTitulares(Activity context)
         {
-            super(context, R.layout.listitem_categorias, lista_categorias);
+            super(context, R.layout.listitem_categorias, lista_equipos);
             this.context = context;
         }
 
@@ -298,11 +296,11 @@ public class CategoriesActivity extends ActionBarActivity {
             if(item == null)
             {
                 LayoutInflater inflater = context.getLayoutInflater();
-                item = inflater.inflate(R.layout.listitem_categorias, null);
+                item = inflater.inflate(R.layout.listitem_equipos, null);
 
                 holder = new ViewHolder();
-                holder.id = (TextView)item.findViewById(R.id.LblIdCategoria);
-                holder.nombre = (TextView)item.findViewById(R.id.LblNombreCategoria);
+                holder.id = (TextView)item.findViewById(R.id.LblIdEquipo);
+                holder.nombre = (TextView)item.findViewById(R.id.LblNombreEquipo);
 
                 item.setTag(holder);
             }
@@ -311,8 +309,8 @@ public class CategoriesActivity extends ActionBarActivity {
                 holder = (ViewHolder)item.getTag();
             }
 
-            holder.id.setText(lista_categorias.get(position).getId());
-            holder.nombre.setText(lista_categorias.get(position).getName());
+            holder.id.setText(lista_equipos.get(position).getId());
+            holder.nombre.setText(lista_equipos.get(position).getNameShow());
 
             return(item);
         }

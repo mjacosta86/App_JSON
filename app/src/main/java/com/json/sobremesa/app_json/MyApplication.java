@@ -18,6 +18,7 @@ public class MyApplication extends Application
     String req;
     ArrayList<MatchsDay> lista_partidos;
     ArrayList<Categories> lista_categorias;
+    ArrayList<ListTeams> lista_equipos;
     //JSONArray json_partidos;
 
     //SETTERS
@@ -48,6 +49,10 @@ public class MyApplication extends Application
     public void setListaCategorias(ArrayList<Categories> l)
     {
         lista_categorias = l;
+    }
+    public void setListaEquipos(ArrayList<ListTeams> l)
+    {
+        lista_equipos = l;
     }
     /*public void setJSONPartidos(JSONArray p)
     {
@@ -81,6 +86,10 @@ public class MyApplication extends Application
     public ArrayList<Categories> getListaCategorias()
     {
         return lista_categorias;
+    }
+    public ArrayList<ListTeams> getListaEquipos()
+    {
+        return lista_equipos;
     }
     /*public JSONArray getJSONPartidos()
     {
